@@ -1,13 +1,13 @@
 function searcher(node) {
-    if (node.nodeType == 3 && greentextRegex.test(node.textContent) && // Check if greentext is valid
-        node.parentNode.className != "greentext" && // Already greentexted
-        node.parentNode.className != "unkfunc" && // *real* greentext
-        node.parentNode.className != "quotelink" && // quotelink (wait what is this for again?)
-        (node.previousSibling == null ||
-        node.previousSibling.tagName == 'DIV' ||
-        node.previousSibling.tagName == 'BR')) {
+    if ((node.previousSibling == null ||
+            node.previousSibling.tagName == 'DIV' ||
+            node.previousSibling.tagName == 'BR') && 
+            node.nodeType == 3 && greentextRegex.test(node.textContent) &&
+            node.parentNode.className != "greentext" &&
+            node.parentNode.className != "unkfunc" && // legit greentext on 4chin
+            node.parentNode.className != "quotelink") { // (wait what is this for again?)
             greenTextify(node);
-    } else {
+    } else if(node.hasChildNodes()){
         for (var i = 0; i < node.childNodes.length; i++) {
             searcher(node.childNodes[i]);
         }
@@ -32,22 +32,22 @@ function greenTextify(node) {
         }
     } */
 
-    if (greenSpan.nextSibling != null && 
-        greenSpan.nextSibling.nodeType != 1 || 
+    if (greenSpan.nextSibling != null && // fuck order of operations holy shit
+        (greenSpan.nextSibling.nodeType != 1 ||
         greenSpan.nextSibling.tagName != 'DIV' && 
-        greenSpan.nextSibling.tagName != 'BR') {
+        greenSpan.nextSibling.tagName != 'BR')) {
             greenTextify(greenSpan.nextSibling);
     }
 }
 
 function onModification(event) {
-    searcher(event.relatedNode);
+    searcher(event.relatedNode.parentNode);
 }
 
-greentextRegex = new RegExp('^[\t\s\r\n]*(>|&gt;)[^>]'); // Greentext Regex
+greentextRegex = /^\s*(?:>|&gt;)[^>]/i;
 
-window.onload = searcher(document.getElementsByTagName('body') [0]); // Onload
-document.getElementsByTagName('body') [0].addEventListener("DOMNodeInserted", onModification, false);
-document.getElementsByTagName('body') [0].addEventListener("DOMCharacterDataModified", onModification, false);
+window.onload = searcher(document);
+document.addEventListener("DOMNodeInserted", onModification, false);
+document.addEventListener("DOMCharacterDataModified", onModification, false);
 
 //setInterval("searcher(document.getElementsByTagName('body') [0]);", 1000);
