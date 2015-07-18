@@ -1,8 +1,10 @@
 function searcher(node) {
+    if (!node) return;
     if ((node.previousSibling == null ||
             node.previousSibling.tagName == 'DIV' ||
             node.previousSibling.tagName == 'BR') && 
             node.nodeType == 3 && greentextRegex.test(node.textContent) &&
+            !node.parentNode.isContentEditable  &&
             node.parentNode.tagName      != 'A' &&
             node.parentNode.tagName      != 'S' &&
             node.parentNode.className    != 'greentext' &&
@@ -43,7 +45,7 @@ function greenTextify(node) {
 }
 
 function onModification(event) {
-    searcher(event.relatedNode.parentNode);
+    searcher(event.relatedNode);
 }
 
 greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>]+)/i;
