@@ -48,7 +48,7 @@ function onModification(event) {
     searcher(event.relatedNode);
 }
 
-greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>]+)/i;
+var greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>]+)/i;
 
 window.addEventListener('load', function() {
     searcher(document);
