@@ -3,9 +3,10 @@ function searcher(node) {
             node.previousSibling.tagName == 'DIV' ||
             node.previousSibling.tagName == 'BR') && 
             node.nodeType == 3 && greentextRegex.test(node.textContent) &&
-            node.parentNode.className != "greentext" &&
-            node.parentNode.className != "unkfunc" && // legit greentext on 4chin
-            node.parentNode.className != "quotelink") { // (wait what is this for again?)
+            node.parentNode.tagName      != 'A' &&
+            node.parentNode.tagName      != 'S' &&
+            node.parentNode.className    != 'greentext' &&
+            node.parentNode.className    != 'quote' ) { // legit greentext on 4chan
             greenTextify(node);
     } else if(node.hasChildNodes()){
         for (var i = 0; i < node.childNodes.length; i++) {
@@ -15,10 +16,11 @@ function searcher(node) {
 }
 
 function greenTextify(node) {
+    var greenSpan;
     if (node.previousSibling != null && node.previousSibling.className == "greentext") { // Last node was already greentexted
-        var greenSpan = node.previousSibling;
+        greenSpan = node.previousSibling;
     } else {
-        var greenSpan = document.createElement('span'); // Create greentext node
+        greenSpan = document.createElement('span'); // Create greentext node
         greenSpan.setAttribute('class', 'greentext'); // Create make span green
         node.parentNode.insertBefore(greenSpan, node); // Insert span into position
     }
@@ -44,9 +46,11 @@ function onModification(event) {
     searcher(event.relatedNode.parentNode);
 }
 
-greentextRegex = /^\s*(?:>|&gt;)[^>]/i;
+greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>]+)/i;
 
-window.onload = searcher(document);
+window.addEventListener('load', function() {
+    searcher(document);
+});
 document.addEventListener("DOMNodeInserted", onModification, false);
 document.addEventListener("DOMCharacterDataModified", onModification, false);
 
