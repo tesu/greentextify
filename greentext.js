@@ -44,16 +44,23 @@ function greenTextify(node) {
     }
 }
 
-function onModification(event) {
-    searcher(event.relatedNode);
-}
+var greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>\s]+)/i;
 
-var greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>]+)/i;
+var obs = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        searcher(mutation.target);
+    });
+});
 
 window.addEventListener('load', function() {
     searcher(document);
+    obs.observe(document, {attributes: false, childList: true, characterData: true, subtree: true});
 });
-document.addEventListener("DOMNodeInserted", onModification, false);
-document.addEventListener("DOMCharacterDataModified", onModification, false);
 
-//setInterval("searcher(document.getElementsByTagName('body') [0]);", 1000);
+// function onModification(event) {
+//     searcher(event.relatedNode);
+// }
+
+// document.addEventListener("DOMNodeInserted", onModification, false);
+// document.addEventListener("DOMCharacterDataModified", onModification, false);
+// setInterval("searcher(document.getElementsByTagName('body') [0]);", 1000);
