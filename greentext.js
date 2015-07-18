@@ -44,7 +44,7 @@ function greenTextify(node) {
     }
 }
 
-var greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>]|>+[^>\s]+)/i;
+var greentextRegex = /^\s*(?:>|&gt;)(?:[^<.>_]|>+[^>\s]+)/i;
 
 var obs = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
