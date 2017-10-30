@@ -1,3 +1,7 @@
 span.greentext {
     color: rgb(120, 153, 34);
 }
+
+span.greentext-light {
+    color: rgb(184, 217, 98);
+}
